@@ -23,7 +23,6 @@ deque<Node*>* Bfs::bfs(Node* current, Node* target) {
         } else {
             // no route.
             if (nodes->empty()) {
-                cout << "no route" << "\n";
                 return nodes;
             } else {
                 // current will be the first node in the deque.

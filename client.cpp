@@ -35,6 +35,8 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
+    cout << "valid driver:) " << endl;
+
     // create the socket.
     Socket* socket = new Tcp(0, atoi(argv[2]));
     // we can get localhost or ip string for ip address.

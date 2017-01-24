@@ -56,6 +56,13 @@ void TaxiCenter::sendTaxi() {
                     currDriver = drivers.at(j);
                     // waits for trip to be calculated.
                     pthread_join (calcRouteThreads.at(tripIndex), NULL);
+                    if (currTrip->getRoute()->empty()) {
+                        // deletes trip from taxi center.
+                        delete trips.at(tripIndex);
+                        trips.erase(trips.begin() + tripIndex);
+                        driverCounter++;
+                        break;
+                    }
                    // sets the drivers trip.
                     currDriver->setTrip(currTrip);
                     currDriver->setNewTrip();

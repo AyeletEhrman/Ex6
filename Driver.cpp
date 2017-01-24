@@ -15,7 +15,7 @@ Driver::Driver(int id1, int age1, MaritalStatus status1, int cabId1, int experie
     route = new vector<Node*>;
     newTrip = false;
     trip = NULL;
-    prevDrivingTime = -1;
+    prevDrivingTime = 0;
 }
 
 Driver::Driver() {

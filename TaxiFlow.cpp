@@ -37,15 +37,15 @@ void TaxiFlow::getInput() {
 
     while (checkMap) {
         // reads the map size.
-        cin >> input;
-        if (!(vi.pointIsValid(input, Point(1000, 1000), " "))) {
+        getline(cin, input);
+        if (!(vi.pointIsValid(input, Point(1001, 1001), " "))) {
             cout << "-1 1" << endl;
             continue;
         }
         Point mapSize = vi.validPoint(input);
         map = new Map(mapSize);
         // reads the number of obstacles.
-        cin >> input;
+        getline(cin, input);
         if (!(vi.isAnumber(input.data()))) {
             cout << "-1 2" << endl;
             continue;
@@ -53,7 +53,7 @@ void TaxiFlow::getInput() {
         numOfObs = stoi(input);
         // reads the obstacles.
         for (int i = 0; i < numOfObs; i++) {
-            cin >> input;
+            getline(cin, input);
 
             if (!(vi.pointIsValid(input, map->getSize(), ","))) {
                 cout << "-1 3" << endl;
@@ -82,10 +82,19 @@ void TaxiFlow::getInput() {
 
 void TaxiFlow::run() {
     // the command from the user.
+    string sCommand;
     int command;
     do {
         // reads the command.
-        cin >> command;
+        getline(cin, sCommand);
+        while (sCommand.length() == 0) {
+            getline(cin, sCommand);
+        }
+        // checks command is valid.
+        if (!vi.isAnumber(sCommand.data())){
+            sCommand = "-1";
+        }
+        command = stoi(sCommand);
         switch (command) {
             // for '1' -adds drivers.
             case 1:
@@ -119,9 +128,19 @@ void TaxiFlow::run() {
 }
 
 void TaxiFlow::addDrivers() {
+    string sNumDrivers;
     int numDrivers;
     // gets the number of drivers from the user.
-    cin >> numDrivers;
+    getline(cin, sNumDrivers);
+    if (!vi.isAnumber(sNumDrivers.data())){
+        cout << "-1" << endl;
+        return;
+    }
+    numDrivers = stoi(sNumDrivers);
+    if (!vi.greaterEqual(numDrivers, 0)) {
+        cout << "-1" << endl;
+        return;
+    }
     threadsVec.resize(numDrivers);
     // opens threads for getting the clients.
     for (int i = 0; i < numDrivers; i++) {
@@ -134,98 +153,67 @@ void TaxiFlow::addDrivers() {
 }
 
 void TaxiFlow::addTrip() {
-    int id, xStart, yStart, xEnd, yEnd, numPassengers, startTime;
-    double tariff;
-    // skips the punctuation marks.
-    char skip;
-    // gets the trip's details from the user.
-    cin >> id >> skip >> xStart >> skip >> yStart >> skip >> xEnd
-        >> skip >> yEnd >> skip >> numPassengers >> skip >> tariff >> skip >> startTime;
-    // gets the starting point from the map.
-    GridPt* start = center.getMap()->getPoint(Point(xStart,yStart));//center.getMap()->getPoint(Point(xStart,yStart));
-    // gets the ending point from the map.
-    GridPt* end = center.getMap()->getPoint(Point(xEnd,yEnd));//center.getMap()->getPoint(Point(xEnd,yEnd));
-    // creates the new trip.
-    Trip* trip = new Trip(id, start, end, numPassengers, tariff, startTime);
+    string input;
+    // get the trip details.
+    getline(cin, input);
+    Trip* trip = vi.validTrip(input, center.getMap());
+    if (trip == NULL) {
+        cout << -1 << endl;
+        return;
+    }
+
+    cout << "got a good trip <3" << endl;
+
     // calcs the route of the trip.
     center.calcTripRoute(trip);
 }
 
 void TaxiFlow::addCab() {
-    int id, type;
-    char manufacturerSign, colorSign;
-    // skips the punctuation marks.
-    char skip;
-    MANUFACTURER manufacturer;
-    COLOR color;
-    Taxi* taxi;
+    string input;
     // gets the cab's details from the user.
-    cin >> id >> skip >> type >> skip >> manufacturerSign >> skip >> colorSign;
-    // assigns the cars manufacturer.
-    switch (manufacturerSign) {
-        case 'H':
-            manufacturer = HONDA;
-            break;
-        case 'S':
-            manufacturer = SUBARO;
-            break;
-        case 'T':
-            manufacturer = TESLA;
-            break;
-        case 'F':
-            manufacturer = FIAT;
-            break;
-        default:
-            break;
-    }
-    // assigns the cars color.
-    switch (colorSign) {
-        case 'R':
-            color = RED;
-            break;
-        case 'B':
-            color = BLUE;
-            break;
-        case 'G':
-            color = GREEN;
-            break;
-        case 'P':
-            color = PINK;
-            break;
-        case 'W':
-            color = WHITE;
-            break;
-        default:
-            break;
-    }
-    // assigns the taxis type.
-    if (type == 1) {
-        taxi = new Taxi(id, manufacturer, color);
-    } else if (type == 2) {
-        taxi = new Luxury(id, manufacturer, color);
-    } else {
+    getline(cin, input);
+    Taxi* taxi = vi.validTaxi(input);
+    if (taxi == NULL) {
+        cout << -1 << endl;
         return;
     }
+
+    cout << "good taxi" << endl;
+
     // adds the taxi.
     center.addTaxi(taxi);
 }
 
 void TaxiFlow::getDriverLocation() {
     int id;
+    string sId;
+    bool foundDriver = false;
     // gets the drivers id.
-    cin >> id;
-    // gets the drivers from the center.
-    vector<Driver*> drivers = center.getDrivers();
-    // looks for the driver.
-    for (int i = 0; i < drivers.size(); i++) {
-        if (id == drivers.at(i)->getId()) {
-            while (drivers.at(i)->getPrevTime() != center.getTime()) {
-                sleep(1);
+    getline(cin, sId);
+    while (sId.length() == 0) {
+        getline(cin, sId);
+    }
+    // checks if id is valid.
+    if (vi.isAnumber(sId.data())) {
+        id = stoi(sId);
+        // gets the drivers from the center.
+        vector<Driver *> drivers = center.getDrivers();
+        // looks for the driver.
+        for (int i = 0; i < drivers.size(); i++) {
+            if (id == drivers.at(i)->getId()) {
+                while (drivers.at(i)->getPrevTime() != center.getTime()) {
+                    sleep(1);
+                }
+                // prints the location of the given driver.
+                cout << *(drivers.at(i)->getLocation()) << endl;
+                foundDriver = true;
+                break;
             }
-            // prints the location of the given driver.
-            cout << *(drivers.at(i)->getLocation()) << endl;
-            break;
         }
+    }
+    // no matching id.
+    if (!foundDriver) {
+        cout << "-1" << endl;
     }
 }
 
