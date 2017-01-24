@@ -15,6 +15,7 @@ TaxiFlow::TaxiFlow(Socket* socket1) {
     go = false;
     exit = false;
     counter = 0;
+
 }
 
 TaxiFlow::~TaxiFlow() {
@@ -29,31 +30,59 @@ TaxiFlow::~TaxiFlow() {
 }
 
 void TaxiFlow::getInput() {
-    int x, y, numOfObs;
-    // will read the ','.
-    char comma;
-    Point mapSize;
-    // reads the map size.
-    cin >> skipws >> x >> y;
-    mapSize = Point(x,y);
-    Map* map = new Map(mapSize);
-    // reads the number of obstacles.
-    cin >> skipws >> numOfObs;
-    // reads the obstacle.
-    for (int i = 0; i < numOfObs; i++) {
-        cin >> x >> comma >> y;
-        GridPt obs = GridPt(Point(x,y));
-        //obstacles.push_back(&obs);
-        map->addObstacle(&obs);
+    bool checkMap = true;
+    string input;
+    int numOfObs;
+    Map* map;
+
+    while (checkMap) {
+        // reads the map size.
+        cin >> input;
+        if (!(vi.pointIsValid(input, Point(1000, 1000), " "))) {
+            cout << "-1 1" << endl;
+            continue;
+        }
+        Point mapSize = vi.validPoint(input);
+        map = new Map(mapSize);
+        // reads the number of obstacles.
+        cin >> input;
+        if (!(vi.isAnumber(input.data()))) {
+            cout << "-1 2" << endl;
+            continue;
+        }
+        numOfObs = stoi(input);
+        // reads the obstacles.
+        for (int i = 0; i < numOfObs; i++) {
+            cin >> input;
+
+            if (!(vi.pointIsValid(input, map->getSize(), ","))) {
+                cout << "-1 3" << endl;
+                break;
+            }
+            GridPt obs = GridPt(vi.validPoint(input));
+            map->addObstacle(&obs);
+        }
+        // check if we got enough obstacles.
+        if (map->getObstacles()->size() != numOfObs) {
+            delete map;
+            continue;
+        }
+        // we got a correct map input.
+        checkMap = false;
     }
+
+    cout << "got a good map! " << endl;
+
     // creates the taxi center with the given map.
     center = TaxiCenter(map);
-    // tuns the commands.
+    // runs the commands.
     run();
     delete map;
 }
 
 void TaxiFlow::run() {
+    // the command from the user.
+    int command;
     do {
         // reads the command.
         cin >> command;
@@ -62,30 +91,30 @@ void TaxiFlow::run() {
             case 1:
                 addDrivers();
                 break;
-            // for '2' -adds a trip.
+                // for '2' -adds a trip.
             case 2:
                 addTrip();
                 break;
-            // for '3' -adds a cab.
+                // for '3' -adds a cab.
             case 3:
                 addCab();
                 break;
-            // for '4' - gets a drivers location.
+                // for '4' - gets a drivers location.
             case 4:
                 getDriverLocation();
                 break;
-            // for '4' - close clients.
+                // for '4' - close clients.
             case 7:
                 closeClients();
                 break;
-            // for '9' - drives the cars.
+                // for '9' - drives the cars.
             case 9:
                 drive();
                 break;
             default:
                 break;
         }
-    // for '7' - end program.
+        // for '7' - end program.
     } while (command != 7);
 }
 
@@ -98,12 +127,8 @@ void TaxiFlow::addDrivers() {
     for (int i = 0; i < numDrivers; i++) {
         pthread_create(&threadsVec[i], NULL, getClientsWrapper, (void*)this);
     }
-    // wait until all client's are received or exit command.
+    // wait until all client's are received.
     while (center.getDrivers().size() != numDrivers) {
-        if (command == 7) {
-            closeClients();
-            break;
-        }
         sleep(1);
     }
 }
@@ -225,8 +250,8 @@ void TaxiFlow::closeClients() {
     // now all threads of clients will tell the drivers to exit.
     exit = true;
     for (int i = 0; i < clients->size(); i++) {
-        // wait for all clients to exit.
-        pthread_join(threadsVec[i], NULL);
+        // wait for all cliemts to exit.
+        pthread_join (threadsVec[i], NULL);
     }
 }
 
@@ -235,7 +260,7 @@ void* TaxiFlow::getClientsWrapper(void* tf) {
     ((TaxiFlow*)tf)->getDriversFromClients();
 }
 
-void TaxiFlow::getDriversFromClients() {
+void TaxiFlow::getDriversFromClients() {//void* socket) {
     char buffer[1000];
     // the firt thread to come will go in and lock.
     pthread_mutex_lock(&acceptMutex);
@@ -255,27 +280,25 @@ void TaxiFlow::getDriversFromClients() {
     // deserizlizes the driver from client.
     boost::archive::binary_iarchive ia(s);
     ia >> driver;
-    // checks that driver is valid.
-    if (driver->getId() != -1) {
-        // sets the drivers map.
-        driver->setMap(center.getMap());
-        //assigns the driver his cab.
-        center.assignCab(driver);
-        //sends the cab to the driver.
-        Taxi *t = driver->getCab();
-        std::string serial_str2;
-        boost::iostreams::back_insert_device<std::string> inserter2(serial_str2);
-        boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s2(inserter2);
-        boost::archive::binary_oarchive oa2(s2);
-        // serilizes the taxi.
-        oa2 << t;
-        // flush the stream to finish writing into the buffer
-        s2.flush();
-        // sends the taxi.
-        ((Tcp *) socket)->sendData(serial_str2, descriptorComm);
-    }
+    // sets the drivers map.
+    driver->setMap(center.getMap());
+    //assigns the driver his cab.
+    center.assignCab(driver);
+    //sends the cab to the driver.
+    Taxi *t = driver->getCab();
+    std::string serial_str2;
+    boost::iostreams::back_insert_device<std::string> inserter2(serial_str2);
+    boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s2(inserter2);
+    boost::archive::binary_oarchive oa2(s2);
+    // serilizes the taxi.
+    oa2 << t;
+    // flush the stream to finish writing into the buffer
+    s2.flush();
+    // sends the taxi.
+    ((Tcp*) socket)->sendData(serial_str2, descriptorComm);
     // adds the driver to the taxi center.
-    DriverDescriptor *ds = new DriverDescriptor(driver, descriptorComm);
+    //center.addDriver(driver);
+    DriverDescriptor* ds = new DriverDescriptor(driver, descriptorComm);
     // lock for adding driver.
     pthread_mutex_lock(&addMutex);
     // add the driver descriptor.
@@ -284,13 +307,7 @@ void TaxiFlow::getDriversFromClients() {
     center.addDriver(ds->getDriver());
     // unlock.
     pthread_mutex_unlock(&addMutex);
-    if (driver->getId() == -1) {
-
-        cout << "change command to 7 " << endl;
-
-        command = 7;
-    }
-    // run the func that will communicate with client throwout the rest of the program.
+    // go to the tread that will communicate with client throwout the rest of the program.
     communicateWithClient(ds);
 }
 
@@ -308,7 +325,7 @@ void TaxiFlow::communicateWithClient(DriverDescriptor* ds) {
                 std::string serial_str1;
                 boost::iostreams::back_insert_device<std::string> inserter1(serial_str1);
                 boost::iostreams::stream
-                    <boost::iostreams::back_insert_device<std::string> > s1(inserter1);
+                        <boost::iostreams::back_insert_device<std::string> > s1(inserter1);
                 boost::archive::binary_oarchive oa1(s1);
                 GridPt* newLocation = new GridPt(ds->getDriver()->getLocation()->getPt());
                 // serilizes the new location.

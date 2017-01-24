@@ -8,13 +8,21 @@
 #include <iostream>
 #include <cstring>
 #include <vector>
+#include "Driver.h"
+
 using namespace std;
 
 class ValidInput {
 
     public:
         static bool greaterEqual(int num, int min);
-        static vector<char*>* parseInput(string input);
+        static vector<char*>* parseInput(string input, string tokens);
+        static bool isAnumber(const char* check);
+        static Driver* validClient(string input);
+        static bool pointIsValid(string input, Point maxSize, string token);
+        static Point validPoint(string input);
+
+
 };
 
 

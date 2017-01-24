@@ -19,17 +19,22 @@ int main(int argc, char *argv[]) {
     // declarations.
     ValidInput vi;
     string input;
-    int id = -1, age = -1, experience = -1, cabId = -1;
-    char over = ' ';
-    char statusSign;
-    // skips the punctuation marks.
-    char skip;
-    MaritalStatus status;
-    bool validDriver = true;
+    Driver* driver;
     // we expect to get ip and port
     if (argc < 3) {
         return 0;
     }
+
+    // gets the driver's details from the user.
+    cin >> input;
+    driver = vi.validClient(input);
+    if (driver == NULL) {
+
+        cout << "invalid driver :( " << endl;
+
+        return 0;
+    }
+
     // create the socket.
     Socket* socket = new Tcp(0, atoi(argv[2]));
     // we can get localhost or ip string for ip address.
@@ -39,57 +44,7 @@ int main(int argc, char *argv[]) {
         socket->setIp(argv[1]);
     }
     socket->initialize();
-    // gets the driver's details from the user.
-    cin >> input;
 
-    vector<char*>* parsed = vi.parseInput(input);
-    if (parsed->size() != 5) {
-        validDriver = false;
-    } else {
-        try {
-            id = stoi(parsed->at(0));
-            age = stoi(parsed->at(1));
-            statusSign = *(parsed->at(2));
-            experience = stoi(parsed->at(3));
-            cabId = stoi(parsed->at(4));
-        } catch(exception e) {
-            validDriver = false;
-        }
-        if (!(vi.greaterEqual(id, 0) || vi.greaterEqual(age, 0)
-              || vi.greaterEqual(experience, 0) || vi.greaterEqual(cabId, 0))) {
-            validDriver = false;
-        }
-        if (validDriver) {
-            // assigns the right status for the driver.
-            switch (statusSign) {
-                case 'S':
-                    status = SINGLE;
-                    break;
-                case 'M':
-                    status = MARRIED;
-                    break;
-                case 'D':
-                    status = DIVORCED;
-                    break;
-                case 'W':
-                    status = WIDOWED;
-                    break;
-                default:
-                    validDriver = false;
-                    break;
-            }
-        }
-    }
-    Driver *driver;
-    if (validDriver) {
-        // creates the new driver and serialize it.
-        driver = new Driver(id, age, status, cabId, experience);
-    } else {
-
-        cout << "invalid driver " << endl;
-
-        driver = new Driver(-1, -1, SINGLE, -1, -1);
-    }
     //DriverDescriptor* ds = new DriverDescriptor(driver, ((Tcp*)socket)->getDescriptorCommunicateClient());
     std::string serial_str;
     boost::iostreams::back_insert_device<std::string> inserter(serial_str);
@@ -103,15 +58,14 @@ int main(int argc, char *argv[]) {
 
     char buffer[1000];
     Taxi *taxi;
-    if (validDriver) {
-        // get the taxi of the driver.
-        socket->receiveData(buffer, sizeof(buffer), socket->getSocketDescriptor());
-        boost::iostreams::basic_array_source<char> device2(buffer, sizeof(buffer));
-        boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s2(device2);
-        boost::archive::binary_iarchive ia2(s2);
-        ia2 >> taxi;
-        driver->setCab(taxi);
-    }
+    // get the taxi of the driver.
+    socket->receiveData(buffer, sizeof(buffer), socket->getSocketDescriptor());
+    boost::iostreams::basic_array_source<char> device2(buffer, sizeof(buffer));
+    boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s2(device2);
+    boost::archive::binary_iarchive ia2(s2);
+    ia2 >> taxi;
+    driver->setCab(taxi);
+
     string command;
     GridPt* location = new GridPt();
     // a loop to get the information from the server.
@@ -134,7 +88,6 @@ int main(int argc, char *argv[]) {
         }
     // if server sent "exit" we exit the loop.
     } while (strcmp(command.data(), "exit") != 0);
-    delete parsed;
     delete driver;
     delete location;
     delete taxi;

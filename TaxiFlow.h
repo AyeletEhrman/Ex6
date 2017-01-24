@@ -11,6 +11,7 @@
 #include "Luxury.h"
 #include "Tcp.h"
 #include "DriverDescriptor.h"
+#include "ValidInput.h"
 #include <unistd.h>
 using namespace std;
 /**
@@ -27,6 +28,7 @@ class TaxiFlow {
         int counter;
         // the command from the user.
         int command;
+        ValidInput vi;
         pthread_mutex_t acceptMutex;
         pthread_mutex_t addMutex;
         pthread_mutex_t driveMutex;

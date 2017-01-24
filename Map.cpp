@@ -7,7 +7,7 @@ Map::Map(Point size1) {
     fillGrid();
 }
 Map::Map() {
-    size = Point(10,10);
+    size = Point(1000, 1000);
     obstacles = new vector<Node*>;
     // calls the function that builds the grid.
     fillGrid();
