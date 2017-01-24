@@ -15,7 +15,6 @@ TaxiFlow::TaxiFlow(Socket* socket1) {
     go = false;
     exit = false;
     counter = 0;
-
 }
 
 TaxiFlow::~TaxiFlow() {
@@ -55,8 +54,6 @@ void TaxiFlow::getInput() {
 }
 
 void TaxiFlow::run() {
-    // the command from the user.
-    int command;
     do {
         // reads the command.
         cin >> command;
@@ -101,8 +98,12 @@ void TaxiFlow::addDrivers() {
     for (int i = 0; i < numDrivers; i++) {
         pthread_create(&threadsVec[i], NULL, getClientsWrapper, (void*)this);
     }
-    // wait until all client's are received.
+    // wait until all client's are received or exit command.
     while (center.getDrivers().size() != numDrivers) {
+        if (command == 7) {
+            closeClients();
+            break;
+        }
         sleep(1);
     }
 }
@@ -224,8 +225,8 @@ void TaxiFlow::closeClients() {
     // now all threads of clients will tell the drivers to exit.
     exit = true;
     for (int i = 0; i < clients->size(); i++) {
-        // wait for all cliemts to exit.
-        pthread_join (threadsVec[i], NULL);
+        // wait for all clients to exit.
+        pthread_join(threadsVec[i], NULL);
     }
 }
 
@@ -234,7 +235,7 @@ void* TaxiFlow::getClientsWrapper(void* tf) {
     ((TaxiFlow*)tf)->getDriversFromClients();
 }
 
-void TaxiFlow::getDriversFromClients() {//void* socket) {
+void TaxiFlow::getDriversFromClients() {
     char buffer[1000];
     // the firt thread to come will go in and lock.
     pthread_mutex_lock(&acceptMutex);
@@ -254,25 +255,27 @@ void TaxiFlow::getDriversFromClients() {//void* socket) {
     // deserizlizes the driver from client.
     boost::archive::binary_iarchive ia(s);
     ia >> driver;
-    // sets the drivers map.
-    driver->setMap(center.getMap());
-    //assigns the driver his cab.
-    center.assignCab(driver);
-    //sends the cab to the driver.
-    Taxi *t = driver->getCab();
-    std::string serial_str2;
-    boost::iostreams::back_insert_device<std::string> inserter2(serial_str2);
-    boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s2(inserter2);
-    boost::archive::binary_oarchive oa2(s2);
-    // serilizes the taxi.
-    oa2 << t;
-    // flush the stream to finish writing into the buffer
-    s2.flush();
-    // sends the taxi.
-    ((Tcp*) socket)->sendData(serial_str2, descriptorComm);
+    // checks that driver is valid.
+    if (driver->getId() != -1) {
+        // sets the drivers map.
+        driver->setMap(center.getMap());
+        //assigns the driver his cab.
+        center.assignCab(driver);
+        //sends the cab to the driver.
+        Taxi *t = driver->getCab();
+        std::string serial_str2;
+        boost::iostreams::back_insert_device<std::string> inserter2(serial_str2);
+        boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s2(inserter2);
+        boost::archive::binary_oarchive oa2(s2);
+        // serilizes the taxi.
+        oa2 << t;
+        // flush the stream to finish writing into the buffer
+        s2.flush();
+        // sends the taxi.
+        ((Tcp *) socket)->sendData(serial_str2, descriptorComm);
+    }
     // adds the driver to the taxi center.
-    //center.addDriver(driver);
-    DriverDescriptor* ds = new DriverDescriptor(driver, descriptorComm);
+    DriverDescriptor *ds = new DriverDescriptor(driver, descriptorComm);
     // lock for adding driver.
     pthread_mutex_lock(&addMutex);
     // add the driver descriptor.
@@ -281,7 +284,13 @@ void TaxiFlow::getDriversFromClients() {//void* socket) {
     center.addDriver(ds->getDriver());
     // unlock.
     pthread_mutex_unlock(&addMutex);
-    // go to the tread that will communicate with client throwout the rest of the program.
+    if (driver->getId() == -1) {
+
+        cout << "change command to 7 " << endl;
+
+        command = 7;
+    }
+    // run the func that will communicate with client throwout the rest of the program.
     communicateWithClient(ds);
 }
 

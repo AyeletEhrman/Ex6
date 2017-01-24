@@ -16,17 +16,17 @@
       <sourceFolder url="file://$MODULE_DIR$/Grid.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Map.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/TaxiCenter.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Map.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Passenger.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Driver.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Socket.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Taxi.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Trip.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/DriverDescriptor.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Map.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Tcp.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Point.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ValidInput.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/TaxiFlow.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/ValidInput.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Passenger.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Trip.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/TaxiCenter.cpp" isTestSource="false" />
@@ -34,6 +34,8 @@
       <sourceFolder url="file://$MODULE_DIR$/Driver.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/GridPt.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Bfs.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/DriverDescriptor.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Taxi.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/DriverDescriptor.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Socket.h" isTestSource="false" />

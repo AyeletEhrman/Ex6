@@ -8,7 +8,7 @@ set(SOURCE_FILES Socket.cpp Socket.h
         Point.cpp Point.h Bfs.cpp Bfs.h Passenger.cpp
         Passenger.h Trip.cpp Trip.h Driver.cpp Driver.h
         Luxury.cpp Luxury.h Map.cpp Map.h Node.cpp Node.h #TaxiFlow.h TaxiFlow.cpp
-        Taxi.cpp Taxi.h TaxiCenter.cpp Tcp.cpp Tcp.h DriverDescriptor.cpp DriverDescriptor.h)
+        Taxi.cpp Taxi.h TaxiCenter.cpp Tcp.cpp Tcp.h DriverDescriptor.cpp DriverDescriptor.h ValidInput.cpp ValidInput.h)
 #add_executable(Ex4 ${SOURCE_FILES})
 
 

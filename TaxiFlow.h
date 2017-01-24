@@ -25,6 +25,8 @@ class TaxiFlow {
         bool go;
         bool exit;
         int counter;
+        // the command from the user.
+        int command;
         pthread_mutex_t acceptMutex;
         pthread_mutex_t addMutex;
         pthread_mutex_t driveMutex;
