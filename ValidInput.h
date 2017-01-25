@@ -8,6 +8,7 @@
 #include <iostream>
 #include <cstring>
 #include <vector>
+#include <string>
 #include "Driver.h"
 
 using namespace std;

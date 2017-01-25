@@ -12,7 +12,9 @@
 #include "Tcp.h"
 #include "DriverDescriptor.h"
 #include "ValidInput.h"
+#include "ThreadPool.h"
 #include <unistd.h>
+#include <string>
 using namespace std;
 /**
  * this class creates a taxiflow that gets the input from the user.
@@ -23,11 +25,8 @@ class TaxiFlow {
         Socket* socket;
         vector<DriverDescriptor*>* clients;
         vector<pthread_t> threadsVec;
-        bool go;
-        bool exit;
-        int counter;
-        // the command from the user.
-        int command;
+        bool go, exit;
+        int counter, command;
         ValidInput vi;
         pthread_mutex_t acceptMutex;
         pthread_mutex_t addMutex;

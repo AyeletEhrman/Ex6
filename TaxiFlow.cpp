@@ -15,7 +15,6 @@ TaxiFlow::TaxiFlow(Socket* socket1) {
     go = false;
     exit = false;
     counter = 0;
-
 }
 
 TaxiFlow::~TaxiFlow() {
@@ -33,13 +32,16 @@ void TaxiFlow::getInput() {
     bool checkMap = true;
     string input;
     int numOfObs;
-    Map* map;
+    Map* map = NULL;
 
     while (checkMap) {
+        if (map != NULL) {
+            delete map;
+        }
         // reads the map size.
         getline(cin, input);
         if (!(vi.pointIsValid(input, Point(1001, 1001), " "))) {
-            cout << "-1 1" << endl;
+            cout << "-1" << endl;
             continue;
         }
         Point mapSize = vi.validPoint(input);
@@ -47,16 +49,16 @@ void TaxiFlow::getInput() {
         // reads the number of obstacles.
         getline(cin, input);
         if (!(vi.isAnumber(input.data()))) {
-            cout << "-1 2" << endl;
+            cout << "-1" << endl;
             continue;
         }
-        numOfObs = stoi(input);
+        numOfObs = atoi(input.data());
         // reads the obstacles.
         for (int i = 0; i < numOfObs; i++) {
             getline(cin, input);
 
             if (!(vi.pointIsValid(input, map->getSize(), ","))) {
-                cout << "-1 3" << endl;
+                cout << "-1" << endl;
                 break;
             }
             GridPt obs = GridPt(vi.validPoint(input));
@@ -64,7 +66,6 @@ void TaxiFlow::getInput() {
         }
         // check if we got enough obstacles.
         if (map->getObstacles()->size() != numOfObs) {
-            delete map;
             continue;
         }
         // we got a correct map input.
@@ -94,7 +95,7 @@ void TaxiFlow::run() {
         if (!vi.isAnumber(sCommand.data())){
             sCommand = "-1";
         }
-        command = stoi(sCommand);
+        command = atoi(sCommand.data());
         switch (command) {
             // for '1' -adds drivers.
             case 1:
@@ -112,8 +113,9 @@ void TaxiFlow::run() {
             case 4:
                 getDriverLocation();
                 break;
-                // for '4' - close clients.
+                // for '7' - close clients.
             case 7:
+                center.terminateThreadPool();
                 closeClients();
                 break;
                 // for '9' - drives the cars.
@@ -121,6 +123,7 @@ void TaxiFlow::run() {
                 drive();
                 break;
             default:
+                cout << "-1" << endl;
                 break;
         }
         // for '7' - end program.
@@ -136,7 +139,7 @@ void TaxiFlow::addDrivers() {
         cout << "-1" << endl;
         return;
     }
-    numDrivers = stoi(sNumDrivers);
+    numDrivers = atoi(sNumDrivers.data());
     if (!vi.greaterEqual(numDrivers, 0)) {
         cout << "-1" << endl;
         return;
@@ -158,7 +161,7 @@ void TaxiFlow::addTrip() {
     getline(cin, input);
     Trip* trip = vi.validTrip(input, center.getMap());
     if (trip == NULL) {
-        cout << -1 << endl;
+        cout << "-1" << endl;
         return;
     }
 
@@ -174,7 +177,7 @@ void TaxiFlow::addCab() {
     getline(cin, input);
     Taxi* taxi = vi.validTaxi(input);
     if (taxi == NULL) {
-        cout << -1 << endl;
+        cout << "-1" << endl;
         return;
     }
 
@@ -195,7 +198,7 @@ void TaxiFlow::getDriverLocation() {
     }
     // checks if id is valid.
     if (vi.isAnumber(sId.data())) {
-        id = stoi(sId);
+        id = atoi(sId.data());
         // gets the drivers from the center.
         vector<Driver *> drivers = center.getDrivers();
         // looks for the driver.

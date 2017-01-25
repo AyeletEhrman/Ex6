@@ -43,7 +43,9 @@ Driver* ValidInput::validClient(string input) {
     int id = -1, age = -1, experience = -1, cabId = -1;
     char statusSign;
     MaritalStatus status;
-
+    if (input.at(input.length() - 1) == ',') {
+        return NULL;
+    }
     vector<char*>* parsed = parseInput(input, ",");
     if (parsed->size() != 5) {
         delete parsed;
@@ -55,15 +57,15 @@ Driver* ValidInput::validClient(string input) {
             delete parsed;
             return NULL;
         }
-        id = stoi(parsed->at(0));
-        age = stoi(parsed->at(1));
+        id = atoi(parsed->at(0));
+        age = atoi(parsed->at(1));
         string sSign(parsed->at(2));
         if (sSign.length() != 1) {
             return NULL;
         }
         statusSign = *(parsed->at(2));
-        experience = stoi(parsed->at(3));
-        cabId = stoi(parsed->at(4));
+        experience = atoi(parsed->at(3));
+        cabId = atoi(parsed->at(4));
     } catch(exception e) {
         delete parsed;
         return NULL;
@@ -98,6 +100,9 @@ Driver* ValidInput::validClient(string input) {
 
 bool ValidInput::pointIsValid(string input, Point maxSize, string token) {
     int x, y;
+    if (input.at(input.length() - 1) == ',') {
+        return false;
+    }
     vector<char*>* parsed = parseInput(input, token);
     if (parsed->size() != 2) {
         delete parsed;
@@ -108,8 +113,8 @@ bool ValidInput::pointIsValid(string input, Point maxSize, string token) {
             delete parsed;
             return false;
         }
-        x = stoi(parsed->at(0));
-        y = stoi(parsed->at(1));
+        x = atoi(parsed->at(0));
+        y = atoi(parsed->at(1));
     } catch(exception e) {
         delete parsed;
         return false;
@@ -127,18 +132,19 @@ bool ValidInput::pointIsValid(string input, Point maxSize, string token) {
 Point ValidInput::validPoint(string input) {
     int x, y;
     vector<char*>* parsed = parseInput(input, " ,");
-    x = stoi(parsed->at(0));
-    y = stoi(parsed->at(1));
+    x = atoi(parsed->at(0));
+    y = atoi(parsed->at(1));
     return Point(x,y);
 }
 
 Trip* ValidInput::validTrip(string input, Map* map) {
     int id, xStart, yStart, xEnd, yEnd, numPassengers, startTime;
     double tariff;
-
     Point start;
     Point end;
-
+    if (input.at(input.length() - 1) == ',') {
+        return NULL;
+    }
     vector<char*>* parsed = parseInput(input, ",");
     if (parsed->size() != 8) {
         delete parsed;
@@ -152,14 +158,14 @@ Trip* ValidInput::validTrip(string input, Map* map) {
             delete parsed;
             return NULL;
         }
-        id = stoi(parsed->at(0));
-        xStart = stoi(parsed->at(1));
-        yStart = stoi(parsed->at(2));
-        xEnd = stoi(parsed->at(3));
-        yEnd = stoi(parsed->at(4));
-        numPassengers = stoi(parsed->at(5));
+        id = atoi(parsed->at(0));
+        xStart = atoi(parsed->at(1));
+        yStart = atoi(parsed->at(2));
+        xEnd = atoi(parsed->at(3));
+        yEnd = atoi(parsed->at(4));
+        numPassengers = atoi(parsed->at(5));
         tariff = strtod(parsed->at(6), NULL);
-        startTime = stoi(parsed->at(7));
+        startTime = atoi(parsed->at(7));
 
         start = Point(xStart, yStart);
         end = Point(xEnd, yEnd);
@@ -186,6 +192,9 @@ Taxi* ValidInput::validTaxi(string input) {
     char manufacturerSign, colorSign;
     MANUFACTURER manufacturer;
     COLOR color;
+    if (input.at(input.length() - 1) == ',') {
+        return NULL;
+    }
     vector<char*>* parsed = parseInput(input, ",");
     if (parsed->size() != 4) {
         delete parsed;
@@ -196,8 +205,8 @@ Taxi* ValidInput::validTaxi(string input) {
             delete parsed;
             return NULL;
         }
-        id = stoi(parsed->at(0));
-        type = stoi(parsed->at(1));
+        id = atoi(parsed->at(0));
+        type = atoi(parsed->at(1));
         string sManu(parsed->at(2));
         string sColor(parsed->at(3));
         if ((sManu.length() != 1) || (sColor.length() != 1)) {

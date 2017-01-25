@@ -2,6 +2,7 @@
 #define EX3_TAXICENTER_H
 #include <vector>
 #include "Driver.h"
+#include "ThreadPool.h"
 #include <pthread.h>
 using namespace std;
 /**
@@ -10,10 +11,10 @@ using namespace std;
  */
 class TaxiCenter {
     private:
+        ThreadPool* tPool;
         vector<Driver*> drivers;
         vector<Taxi*> taxis;
         vector<Trip*> trips;
-        vector<pthread_t> calcRouteThreads;
         pthread_mutex_t calcMutex;
         Map* map;
         int time;
@@ -97,5 +98,7 @@ class TaxiCenter {
          * @param trip the trip for calculation.
          */
         void calcTripRoute(Trip* trip);
+
+        void terminateThreadPool();
 };
 #endif //EX3_TAXICENTER_H

@@ -3,6 +3,7 @@
 TaxiCenter::TaxiCenter(Map* map1) {
     map = map1;
     time = 0;
+    tPool = new ThreadPool(5);
     pthread_mutex_init(&calcMutex, 0);
 }
 
@@ -27,7 +28,9 @@ TaxiCenter::~TaxiCenter() {
     while (trips.size() != 0) {
         delete trips.front();
         trips.erase(trips.begin());
-    }
+    };
+    //tPool->terminate();
+    //delete tPool;
     pthread_mutex_destroy(&calcMutex);
 }
 
@@ -47,15 +50,23 @@ void TaxiCenter::sendTaxi() {
         if (currTrip->getStartTime() == time) {
             for (int j = 0; j < drivers.size(); j++) {
                 // start point of the trip.
-                start = map->getPoint(((GridPt*)currTrip->getStart())->getPt());//*(currTrip->getStart()));
+                start = map->getPoint(((GridPt*)currTrip->getStart())->getPt());
                 // end point of the trip.
-                end = map->getPoint((((GridPt*)currTrip->getEnd())->getPt()));//*(currTrip->getEnd())
+                end = map->getPoint((((GridPt*)currTrip->getEnd())->getPt()));
                 if ((((GridPt*)drivers.at(j)->getLocation()) == start)
                     && !(drivers.at(j)->isDriving())) {
                     // gets the first driver.
                     currDriver = drivers.at(j);
                     // waits for trip to be calculated.
-                    pthread_join (calcRouteThreads.at(tripIndex), NULL);
+
+                    cout << "before finish " << endl;
+
+                    while (!(currTrip->isCalced())) {
+                        sleep(1);
+                    }
+
+                    cout << "after finish" << endl;
+
                     if (currTrip->getRoute()->empty()) {
                         // deletes trip from taxi center.
                         delete trips.at(tripIndex);
@@ -63,7 +74,7 @@ void TaxiCenter::sendTaxi() {
                         driverCounter++;
                         break;
                     }
-                   // sets the drivers trip.
+                    // sets the drivers trip.
                     currDriver->setTrip(currTrip);
                     currDriver->setNewTrip();
                     currDriver->setRoute();
@@ -88,6 +99,7 @@ void TaxiCenter::sendTaxi() {
         }
     }
 }
+
 void TaxiCenter::continueDriving() {
     for (int i = 0; i < drivers.size(); i++) {
         // if the driver needs to drive.
@@ -149,13 +161,16 @@ int TaxiCenter::getTime() {
 }
 
 void TaxiCenter::calcTripRoute(Trip* trip) {
-    int vecSize = calcRouteThreads.size();
-    calcRouteThreads.resize(vecSize + 1);
     // sets the map of the trip.
     trip->setMap(map);
     trip->setMutex(&calcMutex);
     // adds the trip to the center.
     addTrip(trip);
-    // thread for calculating the trip.
-    pthread_create(&(calcRouteThreads.at(vecSize)), NULL, trip->calcRoute, (void*)trip);
+    Task* task = new Task(trip->calcRoute, (void*)trip);
+    // adding task for calculating the trip.
+    tPool->addTask(task);
+}
+
+void TaxiCenter::terminateThreadPool() {
+    tPool->terminate();
 }

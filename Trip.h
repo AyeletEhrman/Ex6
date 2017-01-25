@@ -32,6 +32,8 @@ class Trip {
         int startTime;
         deque<Node*>* route;
         pthread_mutex_t* calcMutex;
+        int threadId;
+        bool finishedCalc;
 
         friend class boost::serialization::access;
         template<class Archive>
@@ -143,6 +145,11 @@ class Trip {
          * @param mut
          */
         void setMutex(pthread_mutex_t* mut);
+        /**
+         *
+         * @return
+         */
+        bool isCalced();
         /**
          * calcs the route of the trip.
          * @param trip the trip we're calculaing.

@@ -11,6 +11,7 @@ Trip::Trip(int id, Node* s, Node* e, int np, double t, int st) {
     startTime = st;
     route = NULL;
     map = NULL;
+    finishedCalc = false;
 }
 Trip::Trip() {
     rideId = 0;
@@ -22,6 +23,7 @@ Trip::Trip() {
     startTime = 0;
     route = NULL;
     map = NULL;
+    finishedCalc = false;
 }
 Trip::~Trip() {
     delete route;
@@ -97,8 +99,19 @@ void* Trip::calcRoute(void* trip) {
     ((Trip*)trip)->map->initialize();
     start->setPassed();
     // sets the route for the trip.
+
+    cout << "before calc bfs" << endl;
+
     ((Trip*)trip)->setRoute(b.bfs(start, end));
+
+    ((Trip*)trip)->finishedCalc = true;
+
+    cout << "after calc bfs" << endl;
 
     // unlocks the mutex.
     pthread_mutex_unlock(((Trip*)trip)->calcMutex);
+}
+
+bool Trip::isCalced() {
+    return finishedCalc;
 }
