@@ -26,6 +26,7 @@ ThreadPool::~ThreadPool() {
         delete tasksQueue->front();
         tasksQueue->pop();
     }
+    delete tasksQueue;
     pthread_mutex_destroy(&lock);
 }
 
@@ -40,6 +41,7 @@ void ThreadPool::doTasks() {
             tasksQueue->pop();
             pthread_mutex_unlock(&lock);
             task->execute();
+            delete task;
             cout << "after execute" << endl;
         }
         else {
@@ -47,9 +49,6 @@ void ThreadPool::doTasks() {
             sleep(1);
         }
     }
-//    for (int i = 0; i < threadsNum; i++) {
-//        pthread_cancel(threads->at(i));
-//    }
 }
 
 void ThreadPool::addTask(Task* task) {
@@ -57,5 +56,8 @@ void ThreadPool::addTask(Task* task) {
 }
 
 void ThreadPool::terminate() {
+    for (int i = 0; i < threadsNum; i++) {
+        pthread_cancel(threads->at(i));
+    }
     stop = true;
 }

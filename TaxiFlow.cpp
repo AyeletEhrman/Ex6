@@ -247,7 +247,7 @@ void TaxiFlow::closeClients() {
 }
 
 void* TaxiFlow::getClientsWrapper(void* tf) {
-    //  receive the clients.
+    // receive the clients.
     ((TaxiFlow*)tf)->getDriversFromClients();
 }
 

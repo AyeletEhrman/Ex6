@@ -64,7 +64,7 @@ class TaxiFlow {
          * @param socket the socket that will communicate.
          * @return a driverDescriptor.
          */
-        void getDriversFromClients();//void* socket);
+        void getDriversFromClients();
         /**
          * communicates withe client throwout the program.
          * @param ds the client's/driver descriptor.
@@ -80,7 +80,7 @@ class TaxiFlow {
          * destructs a TaxiFlow.
          */
         ~TaxiFlow();
-        /*
+        /**
          * this function will be responsible to get the input from the user
          * with the details of the features of the game
          */

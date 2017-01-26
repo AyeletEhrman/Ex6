@@ -174,4 +174,5 @@ void TaxiCenter::calcTripRoute(Trip* trip) {
 
 void TaxiCenter::terminateThreadPool() {
     tPool->terminate();
+    delete tPool;
 }

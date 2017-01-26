@@ -9,8 +9,8 @@
 
 vector<char*>* ValidInput::parseInput(string input, string tokens) {
     vector<char*>* parsed = new vector<char*>;
-    char* str = new char[input.length() + 1];
-    strcpy(str, input.c_str());
+    char* str = (char*)input.data();// new char[input.length() + 1];
+    //strcpy(str, input.c_str());
     char* splits;
     splits = strtok(str, tokens.data());
 
@@ -60,6 +60,7 @@ Driver* ValidInput::validClient(string input) {
         age = atoi(parsed->at(1));
         string sSign(parsed->at(2));
         if (sSign.length() != 1) {
+            delete parsed;
             return NULL;
         }
         statusSign = *(parsed->at(2));
@@ -90,7 +91,7 @@ Driver* ValidInput::validClient(string input) {
             break;
         default:
             delete parsed;
-            return NULL;;
+            return NULL;
     }
     delete parsed;
     // creates the new driver and serialize it.
@@ -133,6 +134,7 @@ Point ValidInput::validPoint(string input) {
     vector<char*>* parsed = parseInput(input, " ,");
     x = atoi(parsed->at(0));
     y = atoi(parsed->at(1));
+    delete parsed;
     return Point(x,y);
 }
 
@@ -209,6 +211,7 @@ Taxi* ValidInput::validTaxi(string input) {
         string sManu(parsed->at(2));
         string sColor(parsed->at(3));
         if ((sManu.length() != 1) || (sColor.length() != 1)) {
+            delete parsed;
             return NULL;
         }
         manufacturerSign = *(parsed->at(2));
@@ -237,6 +240,7 @@ Taxi* ValidInput::validTaxi(string input) {
             manufacturer = FIAT;
             break;
         default:
+            delete parsed;
             return NULL;
     }
     // assigns the cars color.
@@ -257,8 +261,10 @@ Taxi* ValidInput::validTaxi(string input) {
             color = WHITE;
             break;
         default:
+            delete parsed;
             return NULL;
     }
+    delete parsed;
     // assigns the taxis type.
     if (type == 1) {
         return new Taxi(id, manufacturer, color);
