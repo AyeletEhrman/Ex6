@@ -19,7 +19,6 @@ ThreadPool::ThreadPool(int threadsN) {
         pthread_create(&threads->at(i), NULL, startTasks, this);
     }
 }
-
 ThreadPool::~ThreadPool() {
     delete threads;
     // deletes the drivers.

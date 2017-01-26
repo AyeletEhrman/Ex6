@@ -36,7 +36,6 @@ bool ValidInput::isAnumber(const char* check) {
         }
     }
     return true;
-
 }
 
 Driver* ValidInput::validClient(string input) {

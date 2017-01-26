@@ -15,7 +15,3 @@ Task::~Task() {
 void Task::execute() {
     func(arg);
 }
-
-/*void* Task::getArg() {
-    return arg;
-}*/

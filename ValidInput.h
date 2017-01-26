@@ -27,5 +27,4 @@ class ValidInput {
 
 };
 
-
 #endif //EX6_VALIDINPUT_H

@@ -23,8 +23,6 @@ class ThreadPool {
         void doTasks();
         void addTask(Task* task);
         void terminate();
-
-       // void joinThread(int index);
 };
 
 #endif /* THREADPOOL_H_ */

@@ -14,8 +14,6 @@ class Task {
         Task(void* (*func1)(void *arg1), void* arg1);
         virtual ~Task();
         void execute();
-
-    //void* getArg();
 };
 
 #endif //EX6_TASK_H

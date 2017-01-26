@@ -35,6 +35,7 @@ TaxiCenter::~TaxiCenter() {
 }
 
 void TaxiCenter::answerCalls() {
+
 }
 
 void TaxiCenter::sendTaxi() {

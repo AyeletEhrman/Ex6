@@ -91,7 +91,5 @@ class TaxiFlow {
          */
         static void* getClientsWrapper(void* tf);
 
-
-
     };
 #endif //EX3_TAXIFLOW_H

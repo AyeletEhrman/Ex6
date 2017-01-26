@@ -251,11 +251,10 @@ void* TaxiFlow::getClientsWrapper(void* tf) {
     ((TaxiFlow*)tf)->getDriversFromClients();
 }
 
-void TaxiFlow::getDriversFromClients() {//void* socket) {
+void TaxiFlow::getDriversFromClients() {
     char buffer[1000];
     // the firt thread to come will go in and lock.
     pthread_mutex_lock(&acceptMutex);
-
     // accept client.
     ((Tcp*)socket)->acceptClient();
     // get the client's descriptor.
