@@ -34,6 +34,7 @@ deque<Node*>* Bfs::bfs(Node* current, Node* target) {
     delete nodes;
     return finalRoute(current);
 }
+
 deque<Node*>* Bfs::finalRoute(Node* current) {
     deque<Node*>* route = new deque<Node*>;
     route->push_front(current);

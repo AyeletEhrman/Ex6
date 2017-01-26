@@ -98,7 +98,9 @@ class TaxiCenter {
          * @param trip the trip for calculation.
          */
         void calcTripRoute(Trip* trip);
-
+        /**
+         * take care of terminating the threads.
+         */
         void terminateThreadPool();
 };
 
