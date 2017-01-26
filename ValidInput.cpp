@@ -1,27 +1,23 @@
-//
-// Created by ayelet on 22/01/17.
-//
-
-
 #include "ValidInput.h"
-#include "Luxury.h"
-
 
 vector<char*>* ValidInput::parseInput(string input, string tokens) {
     vector<char*>* parsed = new vector<char*>;
-    char* str = (char*)input.data();// new char[input.length() + 1];
-    //strcpy(str, input.c_str());
+    char* str = (char*)input.data();
     char* splits;
+    // get the first part of the input.
     splits = strtok(str, tokens.data());
-
+    // until we finish going over the input.
     while (splits != NULL) {
+        // add the current split to the parsed vec.
         parsed->push_back(splits);
         splits = strtok (NULL, tokens.data());
     }
+    // return the parsed input.
     return parsed;
 }
 
 bool ValidInput::greaterEqual(double num, double min) {
+    // return true if num is >= from min.
     return (num >= min);
 }
 
@@ -29,12 +25,17 @@ bool ValidInput::isAnumber(const char* check) {
     if (check == NULL) {
         return false;
     }
+    // cnvert to string.
     string str(check);
+    // go over the sring.
     for (int i = 0; i < str.length(); i++) {
+        // if the curr char of string isn't a digit.
         if (!isdigit(str.at(i))) {
+            // check is not a number.
             return false;
         }
     }
+    // check is a number.
     return true;
 }
 
@@ -42,23 +43,29 @@ Driver* ValidInput::validClient(string input) {
     int id = -1, age = -1, experience = -1, cabId = -1;
     char statusSign;
     MaritalStatus status;
+    // check if the input ends with ",".
     if (input.at(input.length() - 1) == ',') {
         return NULL;
     }
+    // parse the input with "," token.
     vector<char*>* parsed = parseInput(input, ",");
+    // check if we did'nt get the right amount of values for driver.
     if (parsed->size() != 5) {
         delete parsed;
         return NULL;
     }
     try {
+        // check if we got all the numbers values for id, age, exp, cabId.
         if (!(isAnumber(parsed->at(0))) || !(isAnumber(parsed->at(1)))
             || !(isAnumber(parsed->at(3))) || !(isAnumber(parsed->at(4)))) {
             delete parsed;
             return NULL;
         }
+        // puts the values in place.
         id = atoi(parsed->at(0));
         age = atoi(parsed->at(1));
         string sSign(parsed->at(2));
+        // only one char for the status.
         if (sSign.length() != 1) {
             delete parsed;
             return NULL;
@@ -70,6 +77,7 @@ Driver* ValidInput::validClient(string input) {
         delete parsed;
         return NULL;
     }
+    // checks that the range of id, age, exp, cabId are correct.
     if (!(greaterEqual(id, 0)) || !(greaterEqual(age, 0))
           || !(greaterEqual(experience, 0)) || !(greaterEqual(cabId, 0))) {
         delete parsed;
@@ -81,7 +89,7 @@ Driver* ValidInput::validClient(string input) {
             status = SINGLE;
             break;
         case 'M':
-            status = MARRIED;
+            status =t MARRIED;
             break;
         case 'D':
             status = DIVORCED;
@@ -90,6 +98,7 @@ Driver* ValidInput::validClient(string input) {
             status = WIDOWED;
             break;
         default:
+            // status is invalid.
             delete parsed;
             return NULL;
     }
@@ -100,19 +109,23 @@ Driver* ValidInput::validClient(string input) {
 
 bool ValidInput::pointIsValid(string input, Point maxSize, string token) {
     int x, y;
+    // check if the input ends with ",".
     if (input.at(input.length() - 1) == ',') {
         return false;
     }
     vector<char*>* parsed = parseInput(input, token);
+    // check if we did'nt get the right amount of values for point.
     if (parsed->size() != 2) {
         delete parsed;
         return false;
     }
     try {
+        // checks the vals for x, y are numbers.
         if (!(isAnumber(parsed->at(0))) || !(isAnumber(parsed->at(1)))) {
             delete parsed;
             return false;
         }
+        // assign values for x,y.
         x = atoi(parsed->at(0));
         y = atoi(parsed->at(1));
     } catch(exception e) {
@@ -131,10 +144,13 @@ bool ValidInput::pointIsValid(string input, Point maxSize, string token) {
 
 Point ValidInput::validPoint(string input) {
     int x, y;
+    // parse input with "," token.
     vector<char*>* parsed = parseInput(input, " ,");
+    // assigns the x, y value.
     x = atoi(parsed->at(0));
     y = atoi(parsed->at(1));
     delete parsed;
+    // returns the point.
     return Point(x,y);
 }
 
