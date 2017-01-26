@@ -37,6 +37,7 @@ void TaxiFlow::getInput() {
     while (checkMap) {
         if (map != NULL) {
             delete map;
+            map = NULL;
         }
         // reads the map size.
         getline(cin, input);

@@ -89,7 +89,7 @@ Driver* ValidInput::validClient(string input) {
             status = SINGLE;
             break;
         case 'M':
-            status =t MARRIED;
+            status = MARRIED;
             break;
         case 'D':
             status = DIVORCED;
@@ -202,9 +202,12 @@ Trip* ValidInput::validTrip(string input, Map* map) {
     }
     GridPt* gStart = map->getPoint(start);
     GridPt* gEnd = map->getPoint(end);
-    // creates the new trip.
+    if (gStart == gEnd) {
+        delete parsed;
+        return NULL;
+    }
     delete parsed;
-    // creates the new driver and serialize it.
+    // creates the new trip.
     return new Trip(id, gStart, gEnd, numPassengers, tariff, startTime);
 }
 

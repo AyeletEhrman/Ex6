@@ -6,13 +6,12 @@
 #include <string>
 #include "Driver.h"
 #include "Luxury.h"
+using namespace std;
 /**
  * ValidInput is a class with static funcs that check if input is valid.
  */
-using namespace std;
 
 class ValidInput {
-
     public:
         /**
          * parses input by some given tokens.

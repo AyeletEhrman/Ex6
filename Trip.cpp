@@ -99,14 +99,9 @@ void* Trip::calcRoute(void* trip) {
     ((Trip*)trip)->map->initialize();
     start->setPassed();
     // sets the route for the trip.
-
-    cout << "before calc bfs" << endl;
-
     ((Trip*)trip)->setRoute(b.bfs(start, end));
 
     ((Trip*)trip)->finishedCalc = true;
-
-    cout << "after calc bfs" << endl;
 
     // unlocks the mutex.
     pthread_mutex_unlock(((Trip*)trip)->calcMutex);

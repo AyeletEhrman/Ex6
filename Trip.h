@@ -146,8 +146,8 @@ class Trip {
          */
         void setMutex(pthread_mutex_t* mut);
         /**
-         *
-         * @return
+         * checks if the trip's route has been calculated.
+         * @return true if the route is calculated, false otherwise.
          */
         bool isCalced();
         /**
