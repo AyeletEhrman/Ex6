@@ -9,7 +9,9 @@
 #include <unistd.h>
 #include <iostream>
 using namespace std;
-
+/**
+ * a thread pool class that will manage few threads.
+ */
 class ThreadPool {
     private:
         int threadsNum;
