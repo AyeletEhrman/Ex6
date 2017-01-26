@@ -159,14 +159,18 @@ Trip* ValidInput::validTrip(string input, Map* map) {
     double tariff;
     Point start;
     Point end;
+    // if end of input is comma
     if (input.at(input.length() - 1) == ',') {
         return NULL;
     }
+    // get the parsed input
     vector<char*>* parsed = parseInput(input, ",");
+    // we excpect to get 8 args
     if (parsed->size() != 8) {
         delete parsed;
         return NULL;
     }
+    // we get all the args according to their type and check them.
     try {
         if (!(isAnumber(parsed->at(0))) || !(isAnumber(parsed->at(1)))
             || !(isAnumber(parsed->at(2))) || !(isAnumber(parsed->at(3)))
@@ -183,13 +187,13 @@ Trip* ValidInput::validTrip(string input, Map* map) {
         numPassengers = atoi(parsed->at(5));
         tariff = strtod(parsed->at(6), NULL);
         startTime = atoi(parsed->at(7));
-
         start = Point(xStart, yStart);
         end = Point(xEnd, yEnd);
     } catch(exception e) {
         delete parsed;
         return NULL;
     }
+    // check more validation terms.
     if (!(greaterEqual(id, 0)) || !(map->isInGrid(start))
         || !(map->isInGrid(end)) || !(greaterEqual(numPassengers, 0))
         || !(greaterEqual(startTime, 1)) || !(greaterEqual(tariff, 0))) {
@@ -209,14 +213,18 @@ Taxi* ValidInput::validTaxi(string input) {
     char manufacturerSign, colorSign;
     MANUFACTURER manufacturer;
     COLOR color;
+    // if the input ends with a comma
     if (input.at(input.length() - 1) == ',') {
         return NULL;
     }
+    // get the parsed input
     vector<char*>* parsed = parseInput(input, ",");
+    // we expect to get 4 args
     if (parsed->size() != 4) {
         delete parsed;
         return NULL;
     }
+    // we get all the args according to their type and check them.
     try {
         if (!(isAnumber(parsed->at(0))) || !(isAnumber(parsed->at(1)))) {
             delete parsed;
@@ -232,11 +240,11 @@ Taxi* ValidInput::validTaxi(string input) {
         }
         manufacturerSign = *(parsed->at(2));
         colorSign = *(parsed->at(3));
-
     } catch(exception e) {
         delete parsed;
         return NULL;
     }
+    // id should be positive.
     if (!(greaterEqual(id, 0))) {
         delete parsed;
         return NULL;

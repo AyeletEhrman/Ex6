@@ -33,7 +33,7 @@ void TaxiFlow::getInput() {
     string input;
     int numOfObs;
     Map* map = NULL;
-
+    // loop that gets the map again and again until we get a valid map.
     while (checkMap) {
         if (map != NULL) {
             delete map;
@@ -56,7 +56,6 @@ void TaxiFlow::getInput() {
         // reads the obstacles.
         for (int i = 0; i < numOfObs; i++) {
             getline(cin, input);
-
             if (!(vi.pointIsValid(input, map->getSize(), ","))) {
                 cout << "-1" << endl;
                 break;
@@ -71,9 +70,6 @@ void TaxiFlow::getInput() {
         // we got a correct map input.
         checkMap = false;
     }
-
-    cout << "got a good map! " << endl;
-
     // creates the taxi center with the given map.
     center = TaxiCenter(map);
     // runs the commands.
@@ -140,6 +136,7 @@ void TaxiFlow::addDrivers() {
         return;
     }
     numDrivers = atoi(sNumDrivers.data());
+    // num drivers should be positive.
     if (!vi.greaterEqual(numDrivers, 0)) {
         cout << "-1" << endl;
         return;
@@ -159,14 +156,12 @@ void TaxiFlow::addTrip() {
     string input;
     // get the trip details.
     getline(cin, input);
+    // check if trip is valid.
     Trip* trip = vi.validTrip(input, center.getMap());
     if (trip == NULL) {
         cout << "-1" << endl;
         return;
     }
-
-    cout << "got a good trip <3" << endl;
-
     // calcs the route of the trip.
     center.calcTripRoute(trip);
 }
@@ -175,14 +170,12 @@ void TaxiFlow::addCab() {
     string input;
     // gets the cab's details from the user.
     getline(cin, input);
+    // check if cab input is valid.
     Taxi* taxi = vi.validTaxi(input);
     if (taxi == NULL) {
         cout << "-1" << endl;
         return;
     }
-
-    cout << "good taxi" << endl;
-
     // adds the taxi.
     center.addTaxi(taxi);
 }

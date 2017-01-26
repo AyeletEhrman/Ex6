@@ -29,13 +29,10 @@ TaxiCenter::~TaxiCenter() {
         delete trips.front();
         trips.erase(trips.begin());
     };
-    //tPool->terminate();
-    //delete tPool;
     pthread_mutex_destroy(&calcMutex);
 }
 
 void TaxiCenter::answerCalls() {
-
 }
 
 void TaxiCenter::sendTaxi() {
@@ -59,15 +56,10 @@ void TaxiCenter::sendTaxi() {
                     // gets the first driver.
                     currDriver = drivers.at(j);
                     // waits for trip to be calculated.
-
-                    cout << "before finish " << endl;
-
                     while (!(currTrip->isCalced())) {
                         sleep(1);
                     }
-
-                    cout << "after finish" << endl;
-
+                    // check if route was invalid.
                     if (currTrip->getRoute()->empty()) {
                         // deletes trip from taxi center.
                         delete trips.at(tripIndex);
@@ -79,7 +71,6 @@ void TaxiCenter::sendTaxi() {
                     currDriver->setTrip(currTrip);
                     currDriver->setNewTrip();
                     currDriver->setRoute();
-
                     // pops the start of the route.
                     currDriver->getRoute()->pop_back();
                     // next time the driver will know to drive.

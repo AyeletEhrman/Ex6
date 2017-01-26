@@ -29,14 +29,8 @@ int main(int argc, char *argv[]) {
     cin >> input;
     driver = vi.validClient(input);
     if (driver == NULL) {
-
-        cout << "invalid driver :( " << endl;
-
         return 0;
     }
-
-    cout << "valid driver:) " << endl;
-
     // create the socket.
     Socket* socket = new Tcp(0, atoi(argv[2]));
     // we can get localhost or ip string for ip address.
@@ -46,8 +40,7 @@ int main(int argc, char *argv[]) {
         socket->setIp(argv[1]);
     }
     socket->initialize();
-
-    //DriverDescriptor* ds = new DriverDescriptor(driver, ((Tcp*)socket)->getDescriptorCommunicateClient());
+    
     std::string serial_str;
     boost::iostreams::back_insert_device<std::string> inserter(serial_str);
     boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s(inserter);
